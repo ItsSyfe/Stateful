@@ -1,6 +1,7 @@
 package me.syfe.stateful;
 
 import me.syfe.stateful.commands.KeepInventoryCommand;
+import me.syfe.stateful.listeners.BlockDamageListener;
 import me.syfe.stateful.listeners.EntityExplodeListener;
 import me.syfe.stateful.listeners.PlayerDeathListener;
 import me.syfe.stateful.listeners.PlayerJoinListener;
@@ -36,6 +37,7 @@ public final class Stateful extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
         getServer().getPluginManager().registerEvents(new EntityExplodeListener(), this);
+        getServer().getPluginManager().registerEvents(new BlockDamageListener(), this);
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
     }
 
