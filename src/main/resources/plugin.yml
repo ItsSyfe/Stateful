@@ -1,0 +1,8 @@
+name: Stateful
+version: '1.0.0'
+main: me.syfe.stateful.Stateful
+api-version: '1.21'
+prefix: Stateful
+authors: [ Syfe ]
+description: FlowSMP custom plugin combining all of the modifications written in plugin form.
+folia-supported: true
