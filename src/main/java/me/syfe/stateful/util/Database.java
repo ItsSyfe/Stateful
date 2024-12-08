@@ -58,7 +58,12 @@ public class Database {
         preparedStatement.executeUpdate();
     }
 
-    public void keepInventoryToggle(UUID uuid) throws SQLException {
+    /**
+     * Toggles the keep inventory setting for a player
+     * @param uuid The player's UUID
+     * @return The new state of the keep inventory setting
+     */
+    public boolean keepInventoryToggle(UUID uuid) throws SQLException {
         String query = "SELECT * FROM keep_inventory WHERE uuid = ?";
         PreparedStatement preparedStatement = this.connection.prepareStatement(query);
         preparedStatement.setString(1, uuid.toString());
@@ -66,13 +71,15 @@ public class Database {
         ResultSet resultSet = preparedStatement.executeQuery();
         if (!resultSet.next()) {
             keepInventoryInsert(uuid);
-            return;
+            return true;
         }
 
         query = "UPDATE keep_inventory SET enabled = ? WHERE uuid = ?";
         preparedStatement = this.connection.prepareStatement(query);
-        preparedStatement.setBoolean(1, resultSet.getBoolean("enabled"));
-        preparedStatement.setString(1, uuid.toString());
+        preparedStatement.setBoolean(1, !resultSet.getBoolean("enabled"));
+        preparedStatement.setString(2, uuid.toString());
         preparedStatement.executeUpdate();
+
+        return !resultSet.getBoolean("enabled");
     }
 }

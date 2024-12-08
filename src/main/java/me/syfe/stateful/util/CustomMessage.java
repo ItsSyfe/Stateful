@@ -1,11 +1,13 @@
 package me.syfe.stateful.util;
 
 import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
+import net.kyori.adventure.text.format.TextColor;
 
 public class CustomMessage {
-    public static void createMessage(Player player, String message) {
-        Component component = Component.(Component.text(), Component.text(message));
-        player.sendMessage(component);
+    public static Component addPrefix(Component component) {
+        return Component.text()
+                .append(Component.text("[Stateful] ", TextColor.color(0x00DEE6)))
+                .append(component)
+                .build();
     }
 }

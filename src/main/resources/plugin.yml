@@ -6,3 +6,9 @@ prefix: Stateful
 authors: [ Syfe ]
 description: FlowSMP custom plugin combining all of the modifications written in plugin form.
 folia-supported: true
+commands:
+  keepinventory:
+    description: Toggles keep inventory.
+    usage: /<command>
+    permission: stateful.keepinventory
+    aliases: [ ki, keepinv ]

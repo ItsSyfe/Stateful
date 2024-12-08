@@ -1,14 +1,20 @@
 package me.syfe.stateful;
 
+import me.syfe.stateful.commands.*;
+import me.syfe.stateful.listeners.*;
 import me.syfe.stateful.util.Database;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Stateful extends JavaPlugin {
-    private static Database database;
+    private static Stateful instance;
+    private Database database;
 
     @Override
     public void onEnable() {
+        instance = this;
         database = new Database();
+
+        this.saveDefaultConfig();
 
         try {
             database.connect();
@@ -16,6 +22,9 @@ public final class Stateful extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
+        getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
     }
 
     @Override
@@ -23,7 +32,11 @@ public final class Stateful extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static Database getDatabase() {
+    public Database getDatabase() {
         return database;
+    }
+
+    public static Stateful getInstance() {
+        return instance;
     }
 }

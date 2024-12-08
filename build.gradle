@@ -47,3 +47,10 @@ processResources {
         expand props
     }
 }
+
+task deploy(type: Copy) {
+    dependsOn build
+    from 'build/libs'
+    into '/server/plugins'
+    include '*.jar'
+}
