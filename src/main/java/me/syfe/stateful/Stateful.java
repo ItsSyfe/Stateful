@@ -36,6 +36,9 @@ public final class Stateful extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntityExplodeListener(), this);
         getServer().getPluginManager().registerEvents(new BlockDamageListener(), this);
         getServer().getPluginManager().registerEvents(new EntityChangeBlockListener(), this);
+        getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerTradeListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerInteractEntityListener(), this);
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
     }
 

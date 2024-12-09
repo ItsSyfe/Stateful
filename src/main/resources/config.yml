@@ -1,6 +1,8 @@
 keepInventoryModule: true
 deepslateInstabreakModule: true
 playerHeadDropsModule: true
+noMendingTradeModule: true
+invisibleItemFramesModule: true
 antiCreeperGriefModule: true
 antiEndermanGriefModule: true
 antiGhastGriefModule: true
