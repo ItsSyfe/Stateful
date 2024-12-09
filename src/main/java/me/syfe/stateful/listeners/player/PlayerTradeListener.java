@@ -1,4 +1,4 @@
-package me.syfe.stateful.listeners;
+package me.syfe.stateful.listeners.player;
 
 import io.papermc.paper.event.player.PlayerTradeEvent;
 import me.syfe.stateful.Stateful;

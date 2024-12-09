@@ -1,7 +1,9 @@
 package me.syfe.stateful;
 
 import me.syfe.stateful.commands.KeepInventoryCommand;
-import me.syfe.stateful.listeners.*;
+import me.syfe.stateful.listeners.entity.*;
+import me.syfe.stateful.listeners.misc.*;
+import me.syfe.stateful.listeners.player.*;
 import me.syfe.stateful.util.Database;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,11 +42,14 @@ public final class Stateful extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerTradeListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractEntityListener(), this);
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
+
+        getLogger().info("Registered everything and ready to flow!");
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        getLogger().info("Bye :3");
     }
 
     public Database getDatabase() {

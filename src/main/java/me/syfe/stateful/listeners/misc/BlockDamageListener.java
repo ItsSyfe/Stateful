@@ -1,4 +1,4 @@
-package me.syfe.stateful.listeners;
+package me.syfe.stateful.listeners.misc;
 
 import me.syfe.stateful.Stateful;
 import org.bukkit.Material;
