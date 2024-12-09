@@ -14,5 +14,9 @@ public class EntityExplodeListener implements Listener {
             event.setCancelled(true);
             event.getLocation().getWorld().playSound(event.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 0.56f + Stateful.getRandom().nextFloat() * (0.84f - 0.56f));
         }
+
+        if (Stateful.getInstance().getConfig().getBoolean("antiGhastGriefModule") && event.getEntityType() == EntityType.FIREBALL) {
+            event.setCancelled(true);
+        }
     }
 }

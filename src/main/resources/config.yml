@@ -1,3 +1,5 @@
 keepInventoryModule: true
-antiCreeperGriefModule: true
 deepslateInstabreakModule: true
+antiCreeperGriefModule: true
+antiEndermanGriefModule: true
+antiGhastGriefModule: true
