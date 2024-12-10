@@ -11,7 +11,7 @@ import java.util.Random;
 
 public final class Stateful extends JavaPlugin {
     private static Stateful instance;
-    private static Random random = new Random();
+    private static final Random random = new Random();
 
     public static Stateful getInstance() {
         return instance;
@@ -41,6 +41,8 @@ public final class Stateful extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerTradeListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerInteractEntityListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
+
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
 
         getLogger().info("Registered everything and ready to flow!");
