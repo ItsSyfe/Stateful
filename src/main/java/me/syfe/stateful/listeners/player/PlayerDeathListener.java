@@ -36,17 +36,16 @@ public class PlayerDeathListener implements Listener {
         // Keep Inventory Logic - END
 
         // Player Head Drops - START
-        if (Stateful.getInstance().getConfig().getBoolean("playerHeadDropsModule")) {
-            if (player == player.getKiller()
-                    && player.getLastDamageCause() instanceof EntityDamageByEntityEvent damageEvent
-                    && damageEvent.getCause() == EntityDamageByEntityEvent.DamageCause.PROJECTILE) {
-                ItemStack stack = new ItemStack(Material.PLAYER_HEAD, 1);
-                SkullMeta meta = (SkullMeta) stack.getItemMeta();
-                meta.setOwningPlayer(player);
-                stack.setItemMeta(meta);
-                player.getWorld().dropItemNaturally(player.getLocation(), stack);
-                event.deathMessage(null);
-            }
+        if (Stateful.getInstance().getConfig().getBoolean("playerHeadDropsModule")
+                && player == player.getKiller()
+                && player.getLastDamageCause() instanceof EntityDamageByEntityEvent damageEvent
+                && damageEvent.getCause() == EntityDamageByEntityEvent.DamageCause.PROJECTILE) {
+            ItemStack stack = new ItemStack(Material.PLAYER_HEAD, 1);
+            SkullMeta meta = (SkullMeta) stack.getItemMeta();
+            meta.setOwningPlayer(player);
+            stack.setItemMeta(meta);
+            player.getWorld().dropItemNaturally(player.getLocation(), stack);
+            event.deathMessage(null);
         }
         // Player Head Drops - END
     }
