@@ -14,5 +14,5 @@ Plugin for the FlowSMP, below are implemented features as well as features to be
 - [x] Anti Creeper Grief
 - [x] Anti Enderman Grief
 - [x] Anti Ghast Grief
-- [ ] Staff Mode
+- [x] Staff Mode
 - [x] Snowball deal knockback

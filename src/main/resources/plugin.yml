@@ -12,3 +12,8 @@ commands:
     usage: /<command>
     permission: stateful.keepinventory
     aliases: [ ki, keepinv ]
+  staffmode:
+    description: Toggles staff mode on or off
+    usage: /<command>
+    permission: stateful.staffmode
+    aliases: [ sm ]

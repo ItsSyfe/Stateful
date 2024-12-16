@@ -1,6 +1,7 @@
 package me.syfe.stateful;
 
 import me.syfe.stateful.commands.KeepInventoryCommand;
+import me.syfe.stateful.commands.StaffModeCommand;
 import me.syfe.stateful.listeners.entity.*;
 import me.syfe.stateful.listeners.misc.*;
 import me.syfe.stateful.listeners.player.*;
@@ -47,6 +48,7 @@ public final class Stateful extends JavaPlugin {
         registerListener(new EntityDamageByEntityListener());
 
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
+        getCommand("staffmode").setExecutor(new StaffModeCommand());
 
         getLogger().info("Registered everything and ready to flow!");
     }
@@ -67,5 +69,14 @@ public final class Stateful extends JavaPlugin {
 
     public static Random getRandom() {
         return random;
+    }
+
+    public static boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.ThreadedRegionizer");
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 }
