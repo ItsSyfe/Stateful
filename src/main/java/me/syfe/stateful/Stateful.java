@@ -44,6 +44,7 @@ public final class Stateful extends JavaPlugin {
         registerListener(new PlayerInteractEntityListener());
         registerListener(new EntityDeathListener());
         registerListener(new PlayerInteractListener());
+        registerListener(new EntityDamageByEntityListener());
 
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
 

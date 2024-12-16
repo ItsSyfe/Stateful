@@ -4,6 +4,7 @@ playerHeadDropsModule: true
 noMendingTradeModule: true
 noCropTrampleModule: true
 huskDropsSandModule: true
+snowballFightModule: true
 invisibleItemFramesModule: true
 antiCreeperGriefModule: true
 antiEndermanGriefModule: true
