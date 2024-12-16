@@ -5,6 +5,7 @@ import me.syfe.stateful.listeners.entity.*;
 import me.syfe.stateful.listeners.misc.*;
 import me.syfe.stateful.listeners.player.*;
 import me.syfe.stateful.util.Database;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Random;
@@ -33,15 +34,16 @@ public final class Stateful extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
-        getServer().getPluginManager().registerEvents(new PlayerDeathListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityExplodeListener(), this);
-        getServer().getPluginManager().registerEvents(new BlockDamageListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityChangeBlockListener(), this);
-        getServer().getPluginManager().registerEvents(new VillagerAcquireTradeListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerTradeListener(), this);
-        getServer().getPluginManager().registerEvents(new PlayerInteractEntityListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityDeathListener(), this);
+        registerListener(new PlayerDeathListener());
+        registerListener(new PlayerJoinListener());
+        registerListener(new EntityExplodeListener());
+        registerListener(new BlockDamageListener());
+        registerListener(new EntityChangeBlockListener());
+        registerListener(new VillagerAcquireTradeListener());
+        registerListener(new PlayerTradeListener());
+        registerListener(new PlayerInteractEntityListener());
+        registerListener(new EntityDeathListener());
+        registerListener(new PlayerInteractListener());
 
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
 
@@ -52,6 +54,10 @@ public final class Stateful extends JavaPlugin {
     public void onDisable() {
         // Plugin shutdown logic
         getLogger().info("Bye :3");
+    }
+
+    private void registerListener(Listener listener) {
+        getServer().getPluginManager().registerEvents(listener, this);
     }
 
     public Database getDatabase() {

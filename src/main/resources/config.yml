@@ -2,6 +2,7 @@ keepInventoryModule: true
 deepslateInstabreakModule: true
 playerHeadDropsModule: true
 noMendingTradeModule: true
+noCropTrampleModule: true
 huskDropsSandModule: true
 invisibleItemFramesModule: true
 antiCreeperGriefModule: true

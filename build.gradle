@@ -48,9 +48,9 @@ processResources {
     }
 }
 
-task deploy(type: Copy) {
+tasks.register('deploy', Copy) {
     dependsOn build
     from 'build/libs'
-    into '/server/plugins'
+    into './server/plugins'
     include '*.jar'
 }
