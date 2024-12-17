@@ -9,3 +9,4 @@ invisibleItemFramesModule: true
 antiCreeperGriefModule: true
 antiEndermanGriefModule: true
 antiGhastGriefModule: true
+antiRavagerGriefModule: true

@@ -12,5 +12,9 @@ public class EntityChangeBlockListener implements Listener {
         if (Stateful.getInstance().getConfig().getBoolean("antiEndermanGriefModule") && event.getEntityType() == EntityType.ENDERMAN) {
             event.setCancelled(true);
         }
+
+        if (Stateful.getInstance().getConfig().getBoolean("antiRavagerGriefModule") && event.getEntityType() == EntityType.RAVAGER) {
+            event.setCancelled(true);
+        }
     }
 }
