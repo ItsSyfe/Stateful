@@ -23,6 +23,7 @@ Plugin for the FlowSMP, below are implemented features as well as features to be
 ## Licensing
 
 Stateful, Minecraft Plugin for the FlowSMP
+
 Copyright (C) 2024  Syfe
 
 This program is free software: you can redistribute it and/or modify
