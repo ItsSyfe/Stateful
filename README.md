@@ -16,4 +16,6 @@ Plugin for the FlowSMP, below are implemented features as well as features to be
 - [x] Anti Ghast Grief
 - [x] Staff Mode
 - [x] Snowball deal knockback
-- [ ] Anti Ravager Grief
+- [x] Anti Ravager Grief
+- [ ] Custom music discs
+  - [ ] Renaming disc to song name will convert to custom disc
