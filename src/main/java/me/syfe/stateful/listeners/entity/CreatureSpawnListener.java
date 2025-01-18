@@ -29,6 +29,16 @@ import org.bukkit.util.StructureSearchResult;
 public class CreatureSpawnListener implements Listener {
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
+        handleHuskSpawningInPyramids(event);
+    }
+
+
+    /**
+     * Whenever a hostile mob is spawned, this method (of the module is enabled), replaces any
+     * hostile mob spawned within the bounding box of a desert pyramid with a husk.
+     * @param event
+     */
+    private void handleHuskSpawningInPyramids(CreatureSpawnEvent event) {
         if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL
                 && event.getEntity() instanceof Monster monster) {
             World world = monster.getWorld();
