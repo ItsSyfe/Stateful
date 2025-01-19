@@ -15,6 +15,7 @@
 
 package me.syfe.stateful.listeners.entity;
 
+import me.syfe.stateful.Stateful;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -22,14 +23,14 @@ import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.generator.structure.Structure;
 import org.bukkit.generator.structure.StructureType;
-import org.bukkit.util.StructureSearchResult;
 
 public class CreatureSpawnListener implements Listener {
     @EventHandler
     public void onCreatureSpawn(CreatureSpawnEvent event) {
-        handleHuskSpawningInPyramids(event);
+        if(Stateful.getInstance().getConfig().getBoolean("husksReplacedPyramidModule")) {
+            handleHuskSpawningInPyramids(event);
+        }
     }
 
 
@@ -46,18 +47,17 @@ public class CreatureSpawnListener implements Listener {
                 return;     // If mob is not in overworld, we dont care about it
             }
             Location mobSpawnLocation = monster.getLocation();
-            if(world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, true) == null){
+            if(world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false) == null){
                 return;     // Guard method for when mob is not near desert temple
             }
-            Location desertTempleLocation = world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, true).getLocation();
+            Location desertTempleLocation = world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false).getLocation();
             // Hard code the radius of a desert temple (roughly 21 blocks)
-            if(isWithinBoundingBox(mobSpawnLocation, desertTempleLocation, 21)){
+            if(isWithinBoundingBox(mobSpawnLocation, desertTempleLocation, 10)){
                 event.setCancelled(true);
                 world.spawnEntity(mobSpawnLocation, EntityType.HUSK);
             }
         }
     }
-
 
     /**
      * This determines if an entity is within the "bounding box" of a structure. There is no bukkit method for determining
@@ -73,10 +73,13 @@ public class CreatureSpawnListener implements Listener {
         int maxX = structureLocation.getBlockX() + roughStructureRadius;
         int minZ = structureLocation.getBlockZ() - roughStructureRadius;
         int maxZ = structureLocation.getBlockZ() + roughStructureRadius;
+        int minY = structureLocation.getBlockY() - roughStructureRadius;
+        int maxY = structureLocation.getBlockY() + roughStructureRadius;
 
         int entityX = entityLocation.getBlockX();
         int entityZ = entityLocation.getBlockZ();
+        int entityY = entityLocation.getBlockY();
 
-        return entityX >= minX && entityX <= maxX && entityZ >= minZ && entityZ <= maxZ;
+        return entityX >= minX && entityX <= maxX && entityZ >= minZ && entityZ <= maxZ && entityY >= minY && entityY <= maxY;
     }
 }
