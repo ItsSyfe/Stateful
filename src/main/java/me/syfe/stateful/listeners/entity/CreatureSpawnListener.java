@@ -33,11 +33,10 @@ public class CreatureSpawnListener implements Listener {
         }
     }
 
-
     /**
      * Whenever a hostile mob is spawned, this method (of the module is enabled), replaces any
      * hostile mob spawned within the bounding box of a desert pyramid with a husk.
-     * @param event
+     * @param event Mob spawn event
      */
     private void handleHuskSpawningInPyramids(CreatureSpawnEvent event) {
         if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL
@@ -51,7 +50,7 @@ public class CreatureSpawnListener implements Listener {
                 return;     // Guard method for when mob is not near desert temple
             }
             Location desertTempleLocation = world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false).getLocation();
-            // Hard code the radius of a desert temple (roughly 21 blocks)
+            // Hard code the radius of a desert temple (centered around the checkerboard floor)
             if(isWithinBoundingBox(mobSpawnLocation, desertTempleLocation, 10)){
                 event.setCancelled(true);
                 world.spawnEntity(mobSpawnLocation, EntityType.HUSK);
