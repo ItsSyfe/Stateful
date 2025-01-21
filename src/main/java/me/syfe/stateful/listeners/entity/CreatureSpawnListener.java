@@ -16,14 +16,24 @@
 package me.syfe.stateful.listeners.entity;
 
 import me.syfe.stateful.Stateful;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.structures.DesertPyramidStructure;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.generator.structure.StructureType;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.StructureSearchResult;
+import org.bukkit.util.Vector;
 
 public class CreatureSpawnListener implements Listener {
     @EventHandler
@@ -46,39 +56,35 @@ public class CreatureSpawnListener implements Listener {
                 return;     // If mob is not in overworld, we dont care about it
             }
             Location mobSpawnLocation = monster.getLocation();
-            if(world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false) == null){
+
+            StructureSearchResult desertTempleSearchResult = world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false);
+            if(desertTempleSearchResult == null){
                 return;     // Guard method for when mob is not near desert temple
             }
-            Location desertTempleLocation = world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false).getLocation();
-            // Hard code the radius of a desert temple (centered around the checkerboard floor)
-            if(isWithinBoundingBox(mobSpawnLocation, desertTempleLocation, 10)){
-                event.setCancelled(true);
-                world.spawnEntity(mobSpawnLocation, EntityType.HUSK);
+
+            Location desertTempleLocation = desertTempleSearchResult.getLocation();
+
+            Chunk chunk = world.getChunkAt(desertTempleLocation);
+
+            // fuck nms
+            ServerLevel nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
+            StructureManager nmsStructureManager = nmsWorld.structureManager();
+            ChunkPos nmsChunk = new ChunkPos(chunk.getX(), chunk.getZ());
+
+            for (StructureStart structureStart : nmsStructureManager.startsForStructure(nmsChunk, (nmsStructure) -> nmsStructure instanceof DesertPyramidStructure)) {
+                net.minecraft.world.level.levelgen.structure.BoundingBox nmsBoundingBox = structureStart.getBoundingBox();
+                BoundingBox boundingBox = BoundingBox.of(
+                        new Vector(nmsBoundingBox.minX(), nmsBoundingBox.minY(), nmsBoundingBox.minZ()),
+                        new Vector(nmsBoundingBox.maxX(), nmsBoundingBox.maxY(), nmsBoundingBox.maxZ())
+                );
+
+                if(boundingBox.contains(mobSpawnLocation.toVector())){
+                    event.setCancelled(true);
+                    world.spawnEntity(mobSpawnLocation, EntityType.HUSK);
+                    return;
+                }
             }
+            // ^ nms
         }
-    }
-
-    /**
-     * This determines if an entity is within the "bounding box" of a structure. There is no bukkit method for determining
-     * a structures bounding box, and to avoid iterating through thousands of blocks to determine that, it just
-     * checks to see if the entity location is within a block radius.
-     * @param entityLocation Location of entity to be checked
-     * @param structureLocation Location of target structure
-     * @param roughStructureRadius Integer of rough block radius of structure
-     * @return Returns whether the entity is within the valid dimensions of the structure
-     */
-    private boolean isWithinBoundingBox(Location entityLocation, Location structureLocation, Integer roughStructureRadius) {
-        int minX = structureLocation.getBlockX() - roughStructureRadius;
-        int maxX = structureLocation.getBlockX() + roughStructureRadius;
-        int minZ = structureLocation.getBlockZ() - roughStructureRadius;
-        int maxZ = structureLocation.getBlockZ() + roughStructureRadius;
-        int minY = structureLocation.getBlockY() - roughStructureRadius;
-        int maxY = structureLocation.getBlockY() + roughStructureRadius;
-
-        int entityX = entityLocation.getBlockX();
-        int entityZ = entityLocation.getBlockZ();
-        int entityY = entityLocation.getBlockY();
-
-        return entityX >= minX && entityX <= maxX && entityZ >= minZ && entityZ <= maxZ && entityY >= minY && entityY <= maxY;
     }
 }
