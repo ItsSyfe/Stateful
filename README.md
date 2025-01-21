@@ -7,9 +7,11 @@ Plugin for the FlowSMP, below are implemented features as well as features to be
 - [x] Player Head Drop (on self kill)
 - [x] No Mending Trade
 - [x] No Crop Trampling
-- [ ] Husks Drop Sand
-  - [ ] Temple exclusively spawn Husks
+- [x] Husks Drop Sand
+  - [x] Temple exclusively spawn Husks
   - [x] Husks drop sand
+- [x] Horse Locking (Stable)
+- [ ] Change vanilla mechanics on entities through portals
 - [x] Invisible Item Frames (sneak right click)
 - [x] Anti Creeper Grief
 - [x] Anti Enderman Grief

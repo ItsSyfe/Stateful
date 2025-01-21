@@ -16,10 +16,15 @@
 package me.syfe.stateful;
 
 import me.syfe.stateful.commands.KeepInventoryCommand;
+import me.syfe.stateful.commands.LockSteed;
 import me.syfe.stateful.commands.StaffModeCommand;
+import me.syfe.stateful.commands.SteedTransfer;
 import me.syfe.stateful.listeners.entity.*;
-import me.syfe.stateful.listeners.misc.*;
+import me.syfe.stateful.listeners.misc.BlockDamageListener;
+import me.syfe.stateful.listeners.misc.LeashListener;
 import me.syfe.stateful.listeners.player.*;
+import me.syfe.stateful.listeners.vehicle.VehicleEnterListener;
+import me.syfe.stateful.listeners.vehicle.VehicleEntityCollisionListener;
 import me.syfe.stateful.util.Database;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -62,9 +67,15 @@ public final class Stateful extends JavaPlugin {
         registerListener(new PlayerInteractListener());
         registerListener(new EntityDamageByEntityListener());
         registerListener(new CreatureSpawnListener());
+        registerListener(new EntityBreedListener());
+        registerListener(new VehicleEntityCollisionListener());
+        registerListener(new LeashListener());
+        registerListener(new VehicleEnterListener());
 
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
         getCommand("staffmode").setExecutor(new StaffModeCommand());
+        getCommand("locksteed").setExecutor(new LockSteed());
+        getCommand("steedtransfer").setExecutor(new SteedTransfer());
 
         getLogger().info("Registered everything and ready to flow!");
     }

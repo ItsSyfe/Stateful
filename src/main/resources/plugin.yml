@@ -17,3 +17,19 @@ commands:
     usage: /<command>
     permission: stateful.staffmode
     aliases: [ sm ]
+  locksteed:
+    description: Locks your steed (Also unlocks it!)
+    usage: /locksteed
+    permission: stateful.locksteed
+    aliases: [ ls, togglesteed ]
+    permission-message: You can't lock steeds!
+  steedtransfer:
+    description: Transfer a steed you own to another player
+    usage: /transfersteed <player>
+    permission: stateful.transfersteed
+    permission-message: You can't transfer steeds!
+  forcesteedtransfer:
+    description: Forcefully transfer a steed to another player
+    usage: /forcesteedtransfer <steed uuid> <player>
+    permission: stateful.forcetransfersteed
+    permission-message: You can't force transfer steeds!

@@ -59,6 +59,10 @@ public class Database {
         query = "CREATE TABLE IF NOT EXISTS playermode (uuid TEXT PRIMARY KEY, staffmode BOOLEAN)";
         preparedStatement = this.connection.prepareStatement(query);
         preparedStatement.executeUpdate();
+
+        query = "CREATE TABLE IF NOT EXISTS stable (steedUuid TEXT PRIMARY KEY, playerUuid TEXT)";
+        preparedStatement = connection.prepareStatement(query);
+        preparedStatement.executeUpdate();
     }
 
     public boolean keepInventoryEnabled(UUID uuid) throws SQLException {
@@ -230,5 +234,54 @@ public class Database {
                 player.teleport(location);
             }
         }
+    }
+
+    public boolean toggleSteedLock(String steedUuid, String playerUuid) throws SQLException {
+        if (isLocked(steedUuid)) {
+            return unlockSteed(steedUuid, playerUuid);
+        } else {
+            return lockSteed(steedUuid, playerUuid);
+        }
+    }
+
+    public boolean lockSteed(String steedUuid, String playerUuid) throws SQLException {
+        String query = "INSERT INTO stable (steedUuid, playerUuid) VALUES (?, ?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, steedUuid);
+        preparedStatement.setString(2, playerUuid);
+        preparedStatement.executeUpdate();
+        return true;
+
+    }
+
+    public boolean unlockSteed(String steedUuid, String playerUuid) throws SQLException {
+        String query = "DELETE FROM stable WHERE steedUuid = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, steedUuid);
+        preparedStatement.executeUpdate();
+        return false;
+    }
+
+    public boolean isLocked(String steedUuid) throws SQLException {
+        String query = "SELECT * FROM stable WHERE steedUuid = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, steedUuid);
+        return preparedStatement.executeQuery().next();
+    }
+
+    public boolean isLockedBy(String steedUuid, String playerUuid) throws SQLException {
+        String query = "SELECT * FROM stable WHERE steedUuid = ? AND playerUuid = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, steedUuid);
+        preparedStatement.setString(2, playerUuid);
+        return preparedStatement.executeQuery().next();
+    }
+
+    public void transferOwnership(String steedUuid, String newOwnerUuid) throws SQLException {
+        String query = "UPDATE stable SET playerUuid = ? WHERE steedUuid = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, newOwnerUuid);
+        preparedStatement.setString(2, steedUuid);
+        preparedStatement.executeUpdate();
     }
 }
