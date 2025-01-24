@@ -15,25 +15,26 @@
 
 package me.syfe.stateful.listeners.entity;
 
+import it.unimi.dsi.fastutil.longs.LongIterator;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import me.syfe.stateful.Stateful;
+import net.minecraft.core.Registry;
+import net.minecraft.core.Vec3i;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
-import net.minecraft.world.level.levelgen.structure.StructureStart;
-import net.minecraft.world.level.levelgen.structure.structures.DesertPyramidStructure;
+import net.minecraft.world.level.levelgen.structure.*;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.craftbukkit.CraftWorld;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.generator.structure.StructureType;
-import org.bukkit.util.BoundingBox;
-import org.bukkit.util.StructureSearchResult;
-import org.bukkit.util.Vector;
+
+import java.util.Map;
 
 public class CreatureSpawnListener implements Listener {
     @EventHandler
@@ -43,48 +44,55 @@ public class CreatureSpawnListener implements Listener {
         }
     }
 
-    /**
-     * Whenever a hostile mob is spawned, this method (of the module is enabled), replaces any
-     * hostile mob spawned within the bounding box of a desert pyramid with a husk.
-     * @param event Mob spawn event
-     */
     private void handleHuskSpawningInPyramids(CreatureSpawnEvent event) {
-        if (event.getSpawnReason() == CreatureSpawnEvent.SpawnReason.NATURAL
-                && event.getEntity() instanceof Monster monster) {
-            World world = monster.getWorld();
-            if(world.getEnvironment() != World.Environment.NORMAL){
-                return;     // If mob is not in overworld, we dont care about it
+        if (event.getSpawnReason() != CreatureSpawnEvent.SpawnReason.NATURAL) {
+            return;
+        }
+
+        if (event.getEntity() instanceof Monster monster && isInsideDesertPyramid(monster) && monster.getType() != EntityType.HUSK) {
+            event.setCancelled(true);
+            EntityType type = event.getEntityType();
+            if (type == EntityType.ZOMBIE || type == EntityType.SKELETON || type == EntityType.CREEPER) {
+                Location l = monster.getLocation();
+                l.getWorld().spawnEntity(l, EntityType.HUSK);
             }
-            Location mobSpawnLocation = monster.getLocation();
+        }
+    }
 
-            StructureSearchResult desertTempleSearchResult = world.locateNearestStructure(mobSpawnLocation, StructureType.DESERT_PYRAMID, 30, false);
-            if(desertTempleSearchResult == null){
-                return;     // Guard method for when mob is not near desert temple
-            }
+    private static int[] getChunkCoords(long chunkKey) {
+        int x = (int)chunkKey;
+        int z = (int)(chunkKey >> 32L);
+        return new int[] { x, z };
+    }
 
-            Location desertTempleLocation = desertTempleSearchResult.getLocation();
-
-            Chunk chunk = world.getChunkAt(desertTempleLocation);
-
-            // fuck nms
-            ServerLevel nmsWorld = ((CraftWorld) chunk.getWorld()).getHandle();
-            StructureManager nmsStructureManager = nmsWorld.structureManager();
-            ChunkPos nmsChunk = new ChunkPos(chunk.getX(), chunk.getZ());
-
-            for (StructureStart structureStart : nmsStructureManager.startsForStructure(nmsChunk, (nmsStructure) -> nmsStructure instanceof DesertPyramidStructure)) {
-                net.minecraft.world.level.levelgen.structure.BoundingBox nmsBoundingBox = structureStart.getBoundingBox();
-                BoundingBox boundingBox = BoundingBox.of(
-                        new Vector(nmsBoundingBox.minX(), nmsBoundingBox.minY(), nmsBoundingBox.minZ()),
-                        new Vector(nmsBoundingBox.maxX(), nmsBoundingBox.maxY(), nmsBoundingBox.maxZ())
-                );
-
-                if(boundingBox.contains(mobSpawnLocation.toVector())){
-                    event.setCancelled(true);
-                    world.spawnEntity(mobSpawnLocation, EntityType.HUSK);
-                    return;
+    private static boolean isInsideDesertPyramid(LivingEntity entity) {
+        Location location = entity.getLocation();
+        Chunk entityChunk = location.getChunk();
+        ServerLevel level = ((CraftWorld)entity.getWorld()).getHandle();
+        StructureManager manager = level.structureManager();
+        Structure structure = (Structure)((Registry)manager.registryAccess().lookupOrThrow(Registries.STRUCTURE)).getValue(BuiltinStructures.DESERT_PYRAMID);
+        if (structure != null) {
+            LongSet set = level.getChunk(entityChunk.getX(), entityChunk.getZ()).getReferencesForStructure(structure);
+            if (!set.isEmpty()) {
+                LongIterator iterator = set.iterator();
+                while (iterator.hasNext()) {
+                    long possibleStartKey = iterator.nextLong();
+                    int[] coords = getChunkCoords(possibleStartKey);
+                    Map<Structure, StructureStart> structureMap = level.getChunk(coords[0], coords[1]).getAllStarts();
+                    StructureStart start = structureMap.get(structure);
+                    if (start == null)
+                        continue;
+                    BoundingBox box = start.getBoundingBox();
+                    Vec3i entityPos = new Vec3i(location.getBlockX(), location.getBlockY(), location.getBlockZ());
+                    if (!box.isInside(entityPos))
+                        continue;
+                    for (StructurePiece piece : start.getPieces()) {
+                        if (piece.getBoundingBox().isInside(entityPos))
+                            return true;
+                    }
                 }
             }
-            // ^ nms
         }
+        return false;
     }
 }
