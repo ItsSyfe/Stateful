@@ -86,22 +86,33 @@ public class LeashListener implements Listener {
         if (event.getEntity() instanceof LeashHitch leashHitch && event.getRemover() instanceof Player player) {
             // loop through all entities within bounding box of leash hitch and check if they are horses leashed to our hitch
             for (Entity entity : leashHitch.getNearbyEntities(20, 20, 20)) {
-                if (entity instanceof AbstractHorse steed && steed.getLeashHolder().equals(leashHitch)) {
-                    if (steed.getOwnerUniqueId() == null) {
-                        return;
-                    }
+                if (!(entity instanceof AbstractHorse steed)) {
+                    continue;
+                }
 
-                    if (Stateful.getInstance().getDatabase().isLocked(steed.getUniqueId().toString())
-                            && !(Stateful.getInstance().getDatabase().isLockedBy(steed.getUniqueId().toString(), player.getUniqueId().toString()))) {
-                        player.sendMessage(
-                                addPrefix(
-                                        Component.text("You cannot remove the leash from another player's steed. This steed is owned by ")
-                                                .color(NamedTextColor.RED)
-                                                .append(Component.text(Objects.requireNonNull(steed.getOwner()).getName()))
-                                )
-                        );
-                        event.setCancelled(true);
-                    }
+                if (!steed.isLeashed()) {
+                    continue;
+                }
+
+                if (!steed.getLeashHolder().equals(leashHitch)) {
+                    continue;
+                }
+
+                if (steed.getOwnerUniqueId() == null) {
+                    continue;
+                }
+
+                if (Stateful.getInstance().getDatabase().isLocked(steed.getUniqueId().toString())
+                        && !(Stateful.getInstance().getDatabase().isLockedBy(steed.getUniqueId().toString(), player.getUniqueId().toString()))) {
+                    player.sendMessage(
+                            addPrefix(
+                                    Component.text("You cannot remove the leash from another player's steed. This steed is owned by ")
+                                            .color(NamedTextColor.RED)
+                                            .append(Component.text(Objects.requireNonNull(steed.getOwner()).getName()))
+                            )
+                    );
+                    event.setCancelled(true);
+                    break;
                 }
             }
         }
