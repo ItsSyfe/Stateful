@@ -25,15 +25,24 @@ import me.syfe.stateful.listeners.misc.LeashListener;
 import me.syfe.stateful.listeners.player.*;
 import me.syfe.stateful.listeners.vehicle.VehicleEnterListener;
 import me.syfe.stateful.listeners.vehicle.VehicleEntityCollisionListener;
-import me.syfe.stateful.util.Database;
+import me.syfe.stateful.util.*;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.entity.EntityType;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
 public final class Stateful extends JavaPlugin {
     private static Stateful instance;
     private static final Random random = new Random();
+
+    private int defaultDespawnTime;
+
+    private final HashMap<EntityType, Integer> mobTypeDespawnTimeMap = new HashMap<>();
 
     public static Stateful getInstance() {
         return instance;
@@ -77,6 +86,22 @@ public final class Stateful extends JavaPlugin {
         getCommand("locksteed").setExecutor(new LockSteed());
         getCommand("steedtransfer").setExecutor(new SteedTransfer());
 
+        DespawnImmunityManager despawnManager = new DespawnImmunityManager(this);
+        EntityListeners entityListeners = new EntityListeners(despawnManager);
+
+        try {
+            this.loadAndParseConfig();
+        } catch (InvalidConfigurationException ex) {
+            getLogger().severe("Invalid config.yml. The plugin will shut down.");
+            ex.printStackTrace();
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        getServer().getPluginManager().registerEvents(entityListeners, this);
+        getServer().getGlobalRegionScheduler().runAtFixedRate(this, value -> (new DespawnImmunityExpirer(despawnManager)).run(), 5L, 20L);
+        getServer().getGlobalRegionScheduler().runAtFixedRate(this, value -> (new PortalProcessor(entityListeners)).run(), 5L, 800L);
+
         getLogger().info("Registered everything and ready to flow!");
     }
 
@@ -105,5 +130,30 @@ public final class Stateful extends JavaPlugin {
             return false;
         }
         return true;
+    }
+
+    public void loadAndParseConfig() throws InvalidConfigurationException {
+        String DEFAULT_DESPAWN_IMMUNITY_TIME_KEY = "default-despawn-immunity-time-seconds";
+        String IMMUNITY_TIME_OVERRIDES_KEY = "despawn-immunity-time-overrides";
+        this.reloadConfig();
+        this.defaultDespawnTime = this.getConfig().getInt("default-despawn-immunity-time-seconds");
+        ConfigurationSection despawnSection = this.getConfig().getConfigurationSection("despawn-immunity-time-overrides");
+        boolean hasInvalidMobTypes = false;
+        for (String entityTypeKey : despawnSection.getKeys(false)) {
+            try {
+                EntityType entityType = EntityType.valueOf(entityTypeKey.toUpperCase(Locale.ROOT).replace(" ", "_"));
+                int despawnTimeSec = this.getConfig().getInt("despawn-immunity-time-overrides." + entityTypeKey);
+                this.mobTypeDespawnTimeMap.put(entityType, Integer.valueOf(despawnTimeSec));
+            } catch (IllegalArgumentException ex) {
+                this.getLogger().severe("Invalid mob type '" + entityTypeKey + "'");
+                hasInvalidMobTypes = true;
+            }
+        }
+        if (hasInvalidMobTypes)
+            throw new InvalidConfigurationException("Found invalid mob type");
+    }
+
+    public int getDespawnSeconds(EntityType entityType) {
+        return ((Integer)this.mobTypeDespawnTimeMap.getOrDefault(entityType, Integer.valueOf(this.defaultDespawnTime))).intValue();
     }
 }
