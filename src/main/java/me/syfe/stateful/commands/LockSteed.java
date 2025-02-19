@@ -18,7 +18,7 @@ public class LockSteed extends StableAbstractCommandExecutor {
 
     @Override
     public void stableOnCommand(CommandSender sender, Command command, String label, String[] args, Player player, AbstractHorse steed) throws SQLException {
-        if (!sender.hasPermission("stable.locksteed")) {
+        if (!sender.hasPermission("stateful.locksteed")) {
             player.sendMessage(
                     addPrefix(
                             Component.text("You do not have permission to run this command.")

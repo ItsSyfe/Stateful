@@ -20,7 +20,7 @@ public class SteedTransfer extends StableAbstractCommandExecutor {
 
     @Override
     public void stableOnCommand(CommandSender sender, Command command, String label, String[] args, Player player, AbstractHorse steed) throws SQLException {
-        if (!sender.hasPermission("stable.transfersteed")) {
+        if (!sender.hasPermission("stateful.transfersteed")) {
             sender.sendMessage(
                     addPrefix(
                             Component.text("You do not have permission to run this command.")
