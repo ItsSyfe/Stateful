@@ -1,5 +1,5 @@
 name: Stateful
-version: '1.2.0'
+version: '1.2.1'
 main: me.syfe.stateful.Stateful
 api-version: '1.21'
 prefix: Stateful

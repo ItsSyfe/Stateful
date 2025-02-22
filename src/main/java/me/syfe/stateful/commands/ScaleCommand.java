@@ -14,7 +14,7 @@ import static me.syfe.stateful.util.CustomMessage.addPrefix;
 public class ScaleCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!sender.hasPermission("stateful.staffmode")) {
+        if (!sender.hasPermission("stateful.scale")) {
             sender.sendMessage(
                     addPrefix(
                             Component.text("You do not have permission to use that command", NamedTextColor.RED)
