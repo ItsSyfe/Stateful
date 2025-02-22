@@ -1,5 +1,5 @@
 name: Stateful
-version: '1.1.0'
+version: '1.2.0'
 main: me.syfe.stateful.Stateful
 api-version: '1.21'
 prefix: Stateful
@@ -33,3 +33,9 @@ commands:
     usage: /forcesteedtransfer <steed uuid> <player>
     permission: stateful.forcetransfersteed
     permission-message: You can't force transfer steeds!
+  scale:
+    description: Change your player size
+    usage: /scale <size>
+    permission: stateful.scale
+    aliases: [ size ]
+    permission-message: You can't change your size!

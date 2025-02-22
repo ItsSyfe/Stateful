@@ -15,10 +15,7 @@
 
 package me.syfe.stateful;
 
-import me.syfe.stateful.commands.KeepInventoryCommand;
-import me.syfe.stateful.commands.LockSteed;
-import me.syfe.stateful.commands.StaffModeCommand;
-import me.syfe.stateful.commands.SteedTransfer;
+import me.syfe.stateful.commands.*;
 import me.syfe.stateful.listeners.entity.*;
 import me.syfe.stateful.listeners.misc.BlockDamageListener;
 import me.syfe.stateful.listeners.misc.LeashListener;
@@ -85,6 +82,7 @@ public final class Stateful extends JavaPlugin {
         getCommand("staffmode").setExecutor(new StaffModeCommand());
         getCommand("locksteed").setExecutor(new LockSteed());
         getCommand("steedtransfer").setExecutor(new SteedTransfer());
+        getCommand("scale").setExecutor(new ScaleCommand());
 
         DespawnImmunityManager despawnManager = new DespawnImmunityManager(this);
         EntityListeners entityListeners = new EntityListeners(despawnManager);
