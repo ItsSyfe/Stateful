@@ -18,6 +18,7 @@ package me.syfe.stateful;
 import me.syfe.stateful.commands.*;
 import me.syfe.stateful.listeners.entity.*;
 import me.syfe.stateful.listeners.misc.BlockDamageListener;
+import me.syfe.stateful.listeners.misc.BlockPlaceListener;
 import me.syfe.stateful.listeners.misc.LeashListener;
 import me.syfe.stateful.listeners.player.*;
 import me.syfe.stateful.listeners.vehicle.VehicleEnterListener;
@@ -77,6 +78,7 @@ public final class Stateful extends JavaPlugin {
         registerListener(new VehicleEntityCollisionListener());
         registerListener(new LeashListener());
         registerListener(new VehicleEnterListener());
+        registerListener(new BlockPlaceListener());
 
         getCommand("keepinventory").setExecutor(new KeepInventoryCommand());
         getCommand("staffmode").setExecutor(new StaffModeCommand());

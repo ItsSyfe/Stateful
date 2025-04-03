@@ -12,6 +12,7 @@ antiGhastGriefModule: true
 antiRavagerGriefModule: true
 husksReplacedPyramidModule : true
 stableHorseModule: true
+customAttributeModule: true
 
 # Controls for how long a mob will be immune to hard despawn right after going through a portal.
 # All times in this config are in seconds
